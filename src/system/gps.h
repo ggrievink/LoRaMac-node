@@ -1,19 +1,36 @@
-/*
- / _____)             _              | |
-( (____  _____ ____ _| |_ _____  ____| |__
- \____ \| ___ |    (_   _) ___ |/ ___)  _ \
- _____) ) ____| | | || |_| ____( (___| | | |
-(______/|_____)_|_|_| \__)_____)\____)_| |_|
-    (C)2013 Semtech
-
-Description: Generic driver for the GPS receiver UP501
-
-License: Revised BSD License, see LICENSE.TXT file include in the project
-
-Maintainer: Miguel Luis and Gregory Cristian
-*/
+/*!
+ * \file      gps.h
+ *
+ * \brief     GPS driver implementation
+ *
+ * \copyright Revised BSD License, see section \ref LICENSE.
+ *
+ * \code
+ *                ______                              _
+ *               / _____)             _              | |
+ *              ( (____  _____ ____ _| |_ _____  ____| |__
+ *               \____ \| ___ |    (_   _) ___ |/ ___)  _ \
+ *               _____) ) ____| | | || |_| ____( (___| | | |
+ *              (______/|_____)_|_|_| \__)_____)\____)_| |_|
+ *              (C)2013-2017 Semtech
+ *
+ * \endcode
+ *
+ * \author    Miguel Luis ( Semtech )
+ *
+ * \author    Gregory Cristian ( Semtech )
+ */
 #ifndef __GPS_H__
 #define __GPS_H__
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "utilities.h"
 
 /* Structure to handle the GPS parsed data in ASCII */
 typedef struct
@@ -35,9 +52,7 @@ typedef struct
     char NmeaSpeed[8];
     char NmeaDetectionAngle[8];
     char NmeaDate[8];
-}tNmeaGpsData;
-
-extern tNmeaGpsData NmeaGpsData;
+}NmeaGpsData_t;
 
 /*!
  * \brief Initializes the handling of the GPS receiver
@@ -53,6 +68,11 @@ void GpsStart( void );
  * \brief Switch OFF the GPS
  */
 void GpsStop( void );
+
+/*!
+ * Updates the GPS status
+ */
+void GpsProcess( void );
 
 /*!
  * \brief PPS signal handling function
@@ -92,9 +112,9 @@ void GpsConvertPositionFromStringToNumerical( void );
  * \param [OUT] lati Latitude value
  * \param [OUT] longi Longitude value
  *
- * \retval status [SUCCESS, FAIL]
+ * \retval status [LMN_STATUS_OK, LMN_STATUS_ERROR]
  */
-uint8_t GpsGetLatestGpsPositionDouble ( double *lati, double *longi );
+LmnStatus_t GpsGetLatestGpsPositionDouble ( double *lati, double *longi );
 
 /*!
  * \brief Gets the latest Position (latitude and Longitude) as two binary values
@@ -103,9 +123,9 @@ uint8_t GpsGetLatestGpsPositionDouble ( double *lati, double *longi );
  * \param [OUT] latiBin Latitude value
  * \param [OUT] longiBin Longitude value
  *
- * \retval status [SUCCESS, FAIL]
+ * \retval status [LMN_STATUS_OK, LMN_STATUS_ERROR]
  */
-uint8_t GpsGetLatestGpsPositionBinary ( int32_t *latiBin, int32_t *longiBin );
+LmnStatus_t GpsGetLatestGpsPositionBinary ( int32_t *latiBin, int32_t *longiBin );
 
 /*!
  * \brief Parses the NMEA sentence.
@@ -115,9 +135,9 @@ uint8_t GpsGetLatestGpsPositionBinary ( int32_t *latiBin, int32_t *longiBin );
  * \param [IN] rxBuffer Data buffer to be parsed
  * \param [IN] rxBufferSize Size of data buffer
  *
- * \retval status [SUCCESS, FAIL]
+ * \retval status [LMN_STATUS_OK, LMN_STATUS_ERROR]
  */
-uint8_t GpsParseGpsData( int8_t *rxBuffer, int32_t rxBufferSize );
+LmnStatus_t GpsParseGpsData( int8_t *rxBuffer, int32_t rxBufferSize );
 
 /*!
  * \brief Returns the latest altitude from the parsed NMEA sentence
@@ -136,4 +156,8 @@ void GpsFormatGpsData( void );
  */
 void GpsResetPosition( void );
 
-#endif  // __GPS_H__
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __GPS_H__
